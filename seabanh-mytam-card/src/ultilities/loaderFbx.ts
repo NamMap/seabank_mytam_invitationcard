@@ -1,37 +1,30 @@
-import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
+import { convertMaterialsToPhysical } from "./convertMaterial";
 
-// ✅ Promise-based FBX loader
-export async function loadFBX(url: string, scale = 1): Promise<THREE.Group> {
+
+export async function loadFBX(url: string): Promise<THREE.Group> {//Promise-based FBX loader
   const loader = new FBXLoader();
 
   return new Promise((resolve, reject) => {
     loader.load(
       url,
-      (object) => {
-        // FBX models are often big, scale down
-        object.scale.set(scale, scale, scale);
-/*
-        // Traverse and check textures
-        object.traverse((child: any) => {
-          if (child.isMesh) {
-            if (child.material.map) {
-              console.log("Texture found for:", child.name);
-            }
-            else {
-              console.warn("No texture for:", child.name);
-            }
-            child.material.side = THREE.DoubleSide;
-            child.material.needsUpdate = true;
-          }
-        });
-*/
-        resolve(object);
-      },
-      (xhr) => {
-        console.log(Math.round((xhr.loaded / xhr.total) * 100) + "% loaded");
-      },
+      (object) => { resolve(object); },
+      (xhr) => { console.log(Math.round((xhr.loaded / xhr.total) * 100) + "% loaded"); },
       (error) => reject(error)
     );
   });
+}
+
+export async function FetchFBX(
+  url: string,
+  scale: number = 1,
+  isConvert: boolean = false
+): Promise<THREE.Group | null> {
+  try {
+    const fbx = await loadFBX(url);
+    fbx.scale.set(scale, scale, scale);
+    if (isConvert) { convertMaterialsToPhysical(fbx); }
+    return fbx;
+  }
+  catch (err) { return null; }//console.error("❌ Failed to load FBX:", err);
 }

@@ -28,12 +28,10 @@ export async function initCard(): Promise<cardInitObj> {
     const tracker = new ImageTracker(`${base}textures/card.mind`);
 
     const threeObj = tracker.getThreeObjects();
-    tracker.onFound = () =>{
-        
+    tracker.onFound = () => {//console.log(time,"+++++++++++++++++++")
         isTracking = true;
         time.stamp = performance.now();
-        time.total = 0.0;
-        console.log(time,"+++++++++++++++++++")
+        time.total = 0.0;        
 
         onFound();        
         requestAnimationFrame(updateComponent);
@@ -48,13 +46,12 @@ export async function initCard(): Promise<cardInitObj> {
         threeObj.renderer,
         `${base}textures/test_HDRI.png`,
         0.75
-    );
+    );    
     await tracker.start();
-
     return {
         onFound: onFound,
         onLost: onLost,
-        onUpdate: onUpdates,
+        onUpdates: onUpdates,
         time: time,
         threeObjs: threeObj
     };
@@ -65,7 +62,7 @@ function updateComponent(): void {
   const now = performance.now();
   time.total += (now - time.stamp)/1000.0;
   time.stamp = now;
-  console.log(time,"<<<<update")
+  //console.log(time,"<<<<update");
 
   onUpdates.forEach(fn=>{ fn(); });
   if (isTracking) { requestAnimationFrame(updateComponent); }
@@ -74,7 +71,7 @@ function updateComponent(): void {
 type cardInitObj = {    
     onFound: ()=>void,
     onLost: ()=>void,
-    onUpdate: (()=>void)[]
+    onUpdates: (()=>void)[]
     time: {
         stamp: number,
         total: number

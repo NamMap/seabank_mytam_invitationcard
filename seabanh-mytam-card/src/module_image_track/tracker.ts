@@ -30,6 +30,7 @@ export class ImageTracker {
     this.scene = this.mindarThree.scene;
     this.camera = this.mindarThree.camera;
     this.renderer = this.mindarThree.renderer;
+    this.renderer.sortObjects = true;//************************************ */
     this.anchor = this.mindarThree.addAnchor(0);
     this.smoothedGroup = new THREE.Group();
     this.scene.add(this.smoothedGroup);
